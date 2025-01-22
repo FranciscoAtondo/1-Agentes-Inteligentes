@@ -25,11 +25,10 @@ class NueveCuartos(entornos_o.Entorno):
     
     Metodo Orientado a Objetos
     """
-    def __init__(self, x0=["C1", [["sucio", "sucio","sucio"], ["sucio", "sucio","sucio"], ["sucio", "sucio","sucio"]]]):
+    def __init__(self, x0=["A1", [["sucio", "sucio", "sucio"], ["sucio", "sucio", "sucio"], ["sucio", "sucio", "sucio"]]]):
         """
-        Por default inicialmente el robot está en C1 y todos los cuartos
+        Por default inicialmente el robot está en A1 y todos los cuartos
         están sucios.
-
         """
         super().__init__(x0)
         self.costo = 0
@@ -39,9 +38,9 @@ class NueveCuartos(entornos_o.Entorno):
         piso, cuarto = posicion[0], int(posicion[1])
         
         if accion == "subir":
-            return piso in "BC" and cuarto == 3  # Subir solo desde cuartos derechos
+            return piso in "BC" and cuarto == 1  # Subir solo desde cuartos derechos
         elif accion == "bajar":
-            return piso in "AB" and cuarto == 1  # Bajar solo desde cuartos izquierdos
+            return piso in "AB"  # Bajar solo desde cuartos izquierdos
         elif accion == "ir_Derecha":
             return cuarto < 3
         elif accion == "ir_Izquierda":
@@ -86,20 +85,25 @@ class AgenteReactivoNueveCuartos(entornos_o.Agente):
     """
     def programa(self, percepcion):
         posicion, estado_cuarto = percepcion
+        piso, cuarto = posicion[0], int(posicion[1])  # Dividimos la posición en piso y cuarto
 
         if estado_cuarto == "sucio":
             return "limpiar"
-        elif posicion.endswith("1"):
+        elif cuarto < 3 and piso in "ABC":  # Si no está en el último cuarto, moverse a la derecha
             return "ir_Derecha"
-        elif posicion.endswith("3") and posicion[0] != "C":
+        elif cuarto == 3 and piso != "A":  # Si está en el último cuarto de un piso inferior, subir
             return "subir"
-        elif posicion.endswith("3") and posicion[0] == "C":
+        elif cuarto == 3 and piso == "A":  # Si está en el último cuarto del piso A, moverse a la izquierda
             return "ir_Izquierda"
-        elif posicion.endswith("2"):
+        elif cuarto == 1 and piso != "C":  # Si está en el primer cuarto y no está en el piso C, bajar
+            return "bajar"
+        elif cuarto > 1:  # Si puede moverse a la izquierda
             return "ir_Izquierda"
         else:
             return "nada"
-        
+
+
+
 if __name__ == "__main__":
     # Inicializa el entorno y el agente
     entorno = NueveCuartos()
