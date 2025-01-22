@@ -31,27 +31,79 @@ class NueveCuartos(entornos_o.Entorno):
         están sucios.
 
         """
-        self.x = x0[:]
+        super().__init__(x0)
         self.costo = 0
 
     def accion_legal(self, accion):
-        return accion in ("ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada")
-    #"ir_A", "ir_B", "limpiar", "nada"
+        posicion, _ = self.x
+        piso, cuarto = posicion[0], int(posicion[1])
+        
+        if accion == "subir":
+            return piso in "BC" and cuarto == 3  # Subir solo desde cuartos derechos
+        elif accion == "bajar":
+            return piso in "AB" and cuarto == 1  # Bajar solo desde cuartos izquierdos
+        elif accion == "ir_Derecha":
+            return cuarto < 3
+        elif accion == "ir_Izquierda":
+            return cuarto > 1
+        elif accion in ("limpiar", "nada"):
+            return True
+        return False
 
     def transicion(self, accion):
-        if not self.acción_legal(accion):
-            raise ValueError("La acción no es legal para este estado")
+        if not self.accion_legal(accion):
+            raise ValueError(f"Acción '{accion}' no es legal en el estado actual.")
 
-        robot, a, b = self.x
-        if accion != "nada" or a == "sucio" or b == "sucio":
-            self.costo += 1
+        posicion, cuartos = self.x
+        piso, cuarto = posicion[0], int(posicion[1])
+
         if accion == "limpiar":
-            
-            self.x[" AB".find(self.x[0])] = "limpio"
-        elif accion == "ir_A":
-            self.x[0] = "A"
-        elif accion == "ir_B":
-            self.x[0] = "B"
+            cuartos["ABC".index(piso)][cuarto - 1] = "limpio"
+            self.costo += 1
+        elif accion == "ir_Derecha":
+            self.x[0] = f"{piso}{cuarto + 1}"
+            self.costo += 2
+        elif accion == "ir_Izquierda":
+            self.x[0] = f"{piso}{cuarto - 1}"
+            self.costo += 2
+        elif accion == "subir":
+            self.x[0] = f"{chr(ord(piso) + 1)}{cuarto}"
+            self.costo += 3
+        elif accion == "bajar":
+            self.x[0] = f"{chr(ord(piso) - 1)}{cuarto}"
+            self.costo += 3
+        elif accion == "nada":
+            pass
 
     def percepcion(self):
-        return self.x[0], self.x[" AB".find(self.x[0])]
+        posicion, cuartos = self.x
+        piso, cuarto = posicion[0], int(posicion[1])
+        return posicion, cuartos["ABC".index(piso)][cuarto - 1]
+    
+class AgenteReactivoNueveCuartos(entornos_o.Agente):
+    """
+    Agente reactivo para el entorno NueveCuartos.
+    """
+    def programa(self, percepcion):
+        posicion, estado_cuarto = percepcion
+
+        if estado_cuarto == "sucio":
+            return "limpiar"
+        elif posicion.endswith("1"):
+            return "ir_Derecha"
+        elif posicion.endswith("3") and posicion[0] != "C":
+            return "subir"
+        elif posicion.endswith("3") and posicion[0] == "C":
+            return "ir_Izquierda"
+        elif posicion.endswith("2"):
+            return "ir_Izquierda"
+        else:
+            return "nada"
+        
+if __name__ == "__main__":
+    # Inicializa el entorno y el agente
+    entorno = NueveCuartos()
+    agente = AgenteReactivoNueveCuartos()
+
+    # Simula por 100 pasos
+    entornos_o.simulador(entorno, agente, pasos=100, verbose=True)
