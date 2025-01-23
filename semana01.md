@@ -21,3 +21,14 @@ Las caracteriscitas del entorno se pueden clasificar de la siguiente forma, junt
 
 Un entorno se modela haciendo inventario de los conceptos presentes, las variables, espacio y caracteristicas de estado, percepciones y todas las acciones, tanto posibles como legales.
 
+## Agentes Inteligentes
+
+El Agente es el actor que interactua con el entorno, este puede ser un humano, robot, termostato, etcetera. Las funciones del agente se pueden definir como:
+
+f: p* -> A
+
+Los Programas Agentes corren en una arquitectura fisica para producir f.
+
+El Rendimiento Fijo mide y evalua las secuencias del entorno.
+
+Un Agente Racional escoge la opcion que maximize el valor esperado del Rendimiento Fijo dado la secuencia perceptual.
