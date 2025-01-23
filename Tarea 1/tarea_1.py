@@ -131,4 +131,4 @@ if __name__ == "__main__":
     agente = AgenteReactivoNueveCuartos()
 
     # Simula por 100 pasos
-    entornos_o.simulador(entorno, agente, pasos=100, verbose=True)
+    entornos_o.simulador(entorno, agente, pasos=200, verbose=True)
