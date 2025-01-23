@@ -26,7 +26,7 @@ class Entorno:
         self.x = x0[:]
         self.costo = 0
 
-    def accion_legal(self, accion):
+    def acción_legal(self, accion):
         """
         @param acción: Una accion en el entorno
 
@@ -37,7 +37,7 @@ class Entorno:
         """
         return True
 
-    def transicion(self, accion):
+    def transición(self, accion):
         """
         @param accion: Uno de los elementos de acciones_legales( estado)
 

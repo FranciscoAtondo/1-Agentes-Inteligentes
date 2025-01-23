@@ -26,10 +26,11 @@ class NueveCuartos(entornos_o.Entorno):
     
     Metodo Orientado a Objetos
     """
-    def __init__(self, x0=["A1", [["sucio", "sucio", "sucio"], ["sucio", "sucio", "sucio"], ["sucio", "sucio", "sucio"]]]):
+    def __init__(self, x0=["C1", [["sucio", "sucio","sucio"], ["sucio", "sucio","sucio"], ["sucio", "sucio","sucio"]]]):
         """
         Por default inicialmente el robot está en A1 y todos los cuartos
         están sucios.
+
         """
         super().__init__(x0)
         self.costo = 0
@@ -39,15 +40,15 @@ class NueveCuartos(entornos_o.Entorno):
         piso, cuarto = posicion[0], int(posicion[1])
         
         if accion == "subir":
-            return piso in "BC"  # Subir solo es posible desde los pisos B y C
+            return piso in "BC" and cuarto == 3  # Subir solo desde cuartos derechos
         elif accion == "bajar":
-            return piso in "AB"  # Bajar solo es posible desde los pisos A y B
+            return piso in "AB" and cuarto == 1  # Bajar solo desde cuartos izquierdos
         elif accion == "ir_Derecha":
-            return cuarto < 3  # Ir a la derecha es posible si no estás en el cuarto 3
+            return cuarto < 3
         elif accion == "ir_Izquierda":
-            return cuarto > 1  # Ir a la izquierda es posible si no estás en el cuarto 1
+            return cuarto > 1
         elif accion in ("limpiar", "nada"):
-            return True  # Siempre es posible limpiar o no hacer nada
+            return True
         return False
 
     def transicion(self, accion):
@@ -55,7 +56,7 @@ class NueveCuartos(entornos_o.Entorno):
             raise ValueError(f"Acción '{accion}' no es legal en el estado actual.")
 
         posicion, cuartos = self.x
-        piso, cuarto = posicion[0], int(posicion[1])  # Convertimos la posición
+        piso, cuarto = posicion[0], int(posicion[1])
 
         if accion == "limpiar":
             cuartos["ABC".index(piso)][cuarto - 1] = "limpio"
@@ -70,15 +71,19 @@ class NueveCuartos(entornos_o.Entorno):
             self.x[0] = f"{chr(ord(piso) + 1)}{cuarto}"
             self.costo += 3
         elif accion == "bajar":
-            self.x[0] = f"{chr(ord(piso) - 1)}{cuarto}"  # Baja un nivel manteniendo el cuarto actual
+            self.x[0] = f"{chr(ord(piso) - 1)}{cuarto}"
             self.costo += 3
         elif accion == "nada":
             pass
 
-def percepcion(self):
-    posicion, cuartos = self.x
-    piso, cuarto = posicion[0], int(posicion[1])  # Convertimos la posición
-    return posicion, cuartos["ABC".index(piso)][cuarto - 1]
+    def percepcion(self):
+        posicion, cuartos = self.x
+        piso, cuarto = posicion[0], int(posicion[1])
+        try:
+            return posicion, cuartos["ABC".index(piso)][cuarto - 1]
+        except (IndexError, TypeError) as e:
+            raise ValueError(f"Error al acceder al estado: {self.x}. Detalles: {e}")
+
 
     
 class AgenteReactivoNueveCuartos(entornos_o.Agente):
@@ -91,50 +96,39 @@ class AgenteReactivoNueveCuartos(entornos_o.Agente):
 
         if estado_cuarto == "sucio":
             return "limpiar"
-        elif cuarto < 3 and piso in "ABC":  # Si no está en el último cuarto, moverse a la derecha
+        elif cuarto < 3:  # Si no estamos en el último cuarto, ir a la derecha
             return "ir_Derecha"
-        elif cuarto == 3 and piso != "A":  # Si está en el último cuarto de un piso inferior, subir
+        elif cuarto == 3 and estado_cuarto == "limpio" and piso != "C":  # Subir si estamos en el último cuarto de un piso y no estamos en C
             return "subir"
-        elif cuarto == 3 and piso == "A":  # Si está en el último cuarto del piso A, moverse a la izquierda
-            return "ir_Izquierda"
-        elif cuarto == 1 and piso != "C":  # Si está en el primer cuarto y no está en el piso C, bajar
+        elif cuarto == 1 and estado_cuarto == "limpio" and piso != "A":  # Bajar si estamos en el primer cuarto de un piso y no estamos en A
             return "bajar"
-        elif cuarto > 1:  # Si puede moverse a la izquierda
+        elif cuarto > 1:  # Si no estamos en el primer cuarto, ir a la izquierda
             return "ir_Izquierda"
-        else:
+        else:  # Si todo está limpio o no hay nada más que hacer, hacer nada
             return "nada"
         
-class AgenteAleatorio(entornos_o.Agente):
+class AgenteAleatorioNueveCuartos(entornos_o.Agente):
     """
     Agente Aleatorio para el entorno NueveCuartos.
+    Selecciona una acción al azar entre las legales.
     """
-    def programa(self, percepcion):
-        posicion, estado_cuarto = percepcion
-        piso, cuarto = posicion[0], int(posicion[1])
-        
-        num = random.randrange(7)
 
-        if num == 0 and estado_cuarto == "sucio":
-            return "limpiar"
-        elif num == 1 and cuarto < 3 and piso in "ABC":  # Si no está en el último cuarto, moverse a la derecha
-            return "ir_Derecha"
-        elif num == 2 and cuarto == 3 and piso != "A":  # Si está en el último cuarto de un piso inferior, subir
-            return "subir"
-        elif num == 3 and cuarto == 3 and piso == "A":  # Si está en el último cuarto del piso A, moverse a la izquierda
-            return "ir_Izquierda"
-        elif num == 4 and cuarto == 1 and piso != "C":  # Si está en el primer cuarto y no está en el piso C, bajar
-            return "bajar"
-        elif num == 5 and cuarto > 1:  # Si puede moverse a la izquierda
-            return "ir_Izquierda"
-        elif num == 6:
-            return "nada"
-        else:
-            return "nada"
+    def programa(self, percepcion):
+        posicion, estado_cuarto = percepcion  # Recibe la posición actual y el estado del cuarto
+        acciones_posibles = ["limpiar", "ir_Derecha", "ir_Izquierda", "subir", "bajar", "nada"]
+
+        # Filtra las acciones legales
+        acciones_legales = [accion for accion in acciones_posibles if entorno.accion_legal(accion)]
+
+        print(f"Estado actual: {self.x}")
+        # Selecciona una acción aleatoria de entre las legales
+        return random.choice(acciones_legales)
 
 if __name__ == "__main__":
     # Inicializa el entorno y el agente
     entorno = NueveCuartos()
-    agente = AgenteAleatorio()
+    #agente = AgenteAleatorioNueveCuartos()
+    agente = AgenteReactivoNueveCuartos()
 
     # Simula por 100 pasos
     entornos_o.simulador(entorno, agente, pasos=100, verbose=True)

@@ -114,4 +114,3 @@ def imprime_simulacion(historial, s_0):
                 str(s_i).center(25) +
                 str(c_i).rjust(12))
     print('_' * (10 + 40 + 25 + 15) + '\n\n')
-
