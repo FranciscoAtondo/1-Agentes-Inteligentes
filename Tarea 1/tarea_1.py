@@ -17,6 +17,7 @@ import random
 # Usa el modulo doscuartos_f.py para reutilizar código
 # Agrega los modulos que requieras de python
 
+# 1 - Definicion de NueveCuartos
 class NueveCuartos(entornos_o.Entorno):
     """
     Crea un entorno de nueve cuartos 3x3, osea:
@@ -85,7 +86,8 @@ class NueveCuartos(entornos_o.Entorno):
         if piso not in "ABC" or cuarto < 1 or cuarto > 3:
             raise ValueError(f"Posición inválida: {posicion}. Estado: {self.x}")
         return posicion, cuartos["ABC".index(piso)][cuarto - 1]
-    
+
+# 2 - Agente Reactivo
 class AgenteReactivoNueveCuartos(entornos_o.Agente):
     """
     Agente reactivo para el entorno NueveCuartos.
@@ -135,6 +137,162 @@ class AgenteAleatorioNueveCuartos(entornos_o.Agente):
             return "nada"
         else:
             return "nada"
+
+# 3 - Nueve Cuartos Ciego
+class NueveCuartosCiego(NueveCuartos):
+        """
+        Funciona de forma identica a Nueve Cuartos, pero no verifica el estado de la habitacion.
+        """
+        def percepcion(self):
+            return []
+
+# 4 - Nueve Cuartos Estocastico
+class NueveCuartosEstocastico(NueveCuartos):
+
+    def transicion(self, accion):
+        if not self.accion_legal(accion):
+             print(f"Acción ilegal: {accion}")
+             return "nada" # Si la acción no es legal, simplemente no hace nada
+            #raise ValueError(f"Acción '{accion}' no es legal en el estado actual.")
+
+        print(f"Estado actual: {self.x}, Acción: {accion}")
+        posicion, cuartos = self.x
+        piso, cuarto = posicion[0], int(posicion[1])
+
+        num = random.randrange(10)
+
+        if accion == "limpiar":
+            if(num < 8):
+                cuartos["ABC".index(piso)][cuarto - 1] = "limpio"
+                self.costo += 1
+            else:
+                pass  
+        elif accion == "ir_Derecha" and cuarto < 3:
+            if(num > 2):
+                self.x[0] = f"{piso}{cuarto + 1}"
+                self.costo += 2
+            elif(num == 1):
+                num = random.randrange(6)
+                if(num == 0):
+                    cuartos["ABC".index(piso)][cuarto - 1] = "limpio"
+                    self.costo += 1
+                elif(num == 1) == "ir_Derecha" and cuarto < 3:
+                    self.x[0] = f"{piso}{cuarto + 1}"
+                    self.costo += 2
+                elif(num == 2) == "ir_Izquierda" and cuarto > 1:
+                    self.x[0] = f"{piso}{cuarto - 1}"
+                    self.costo += 2
+                elif(num == 3) == "subir" and piso != "A":
+                    self.x[0] = f"{chr(ord(piso) + 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 4) == "bajar" and piso != "C":
+                    self.x[0] = f"{chr(ord(piso) - 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 5) == "nada":
+                    pass
+            elif(num == 0):
+                pass
+                
+                
+        elif accion == "ir_Izquierda" and cuarto > 1:
+            if(num > 2):
+                self.x[0] = f"{piso}{cuarto - 1}"
+                self.costo += 2
+            elif(num == 1):
+                num = random.randrange(6)
+                if(num == 0):
+                    cuartos["ABC".index(piso)][cuarto - 1] = "limpio"
+                    self.costo += 1
+                elif(num == 1) == "ir_Derecha" and cuarto < 3:
+                    self.x[0] = f"{piso}{cuarto + 1}"
+                    self.costo += 2
+                elif(num == 2) == "ir_Izquierda" and cuarto > 1:
+                    self.x[0] = f"{piso}{cuarto - 1}"
+                    self.costo += 2
+                elif(num == 3) == "subir" and piso != "A":
+                    self.x[0] = f"{chr(ord(piso) + 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 4) == "bajar" and piso != "C":
+                    self.x[0] = f"{chr(ord(piso) - 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 5) == "nada":
+                    pass
+            elif(num == 0):
+                pass
+        elif accion == "subir" and piso != "A":
+            if(num > 2):
+                self.x[0] = f"{chr(ord(piso) + 1)}{cuarto}"
+                self.costo += 3
+            elif(num == 1):
+                num = random.randrange(6)
+                if(num == 0):
+                    cuartos["ABC".index(piso)][cuarto - 1] = "limpio"
+                    self.costo += 1
+                elif(num == 1) == "ir_Derecha" and cuarto < 3:
+                    self.x[0] = f"{piso}{cuarto + 1}"
+                    self.costo += 2
+                elif(num == 2) == "ir_Izquierda" and cuarto > 1:
+                    self.x[0] = f"{piso}{cuarto - 1}"
+                    self.costo += 2
+                elif(num == 3) == "subir" and piso != "A":
+                    self.x[0] = f"{chr(ord(piso) + 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 4) == "bajar" and piso != "C":
+                    self.x[0] = f"{chr(ord(piso) - 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 5) == "nada":
+                    pass
+            elif(num == 0):
+                pass
+        elif accion == "bajar" and piso != "C":
+            if(num > 2):
+                self.x[0] = f"{chr(ord(piso) - 1)}{cuarto}"
+                self.costo += 3
+            elif(num == 1):
+                num = random.randrange(6)
+                if(num == 0):
+                    cuartos["ABC".index(piso)][cuarto - 1] = "limpio"
+                    self.costo += 1
+                elif(num == 1) == "ir_Derecha" and cuarto < 3:
+                    self.x[0] = f"{piso}{cuarto + 1}"
+                    self.costo += 2
+                elif(num == 2) == "ir_Izquierda" and cuarto > 1:
+                    self.x[0] = f"{piso}{cuarto - 1}"
+                    self.costo += 2
+                elif(num == 3) == "subir" and piso != "A":
+                    self.x[0] = f"{chr(ord(piso) + 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 4) == "bajar" and piso != "C":
+                    self.x[0] = f"{chr(ord(piso) - 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 5) == "nada":
+                    pass
+            elif(num == 0):
+                pass
+        elif accion == "nada":
+            if(num > 2):
+                pass
+            elif(num == 1):
+                num = random.randrange(6)
+                if(num == 0):
+                    cuartos["ABC".index(piso)][cuarto - 1] = "limpio"
+                    self.costo += 1
+                elif(num == 1) == "ir_Derecha" and cuarto < 3:
+                    self.x[0] = f"{piso}{cuarto + 1}"
+                    self.costo += 2
+                elif(num == 2) == "ir_Izquierda" and cuarto > 1:
+                    self.x[0] = f"{piso}{cuarto - 1}"
+                    self.costo += 2
+                elif(num == 3) == "subir" and piso != "A":
+                    self.x[0] = f"{chr(ord(piso) + 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 4) == "bajar" and piso != "C":
+                    self.x[0] = f"{chr(ord(piso) - 1)}{cuarto}"
+                    self.costo += 3
+                elif(num == 5) == "nada":
+                    pass
+            elif(num == 0):
+                pass
 
 if __name__ == "__main__":
     # Inicializa el entorno y el agente
