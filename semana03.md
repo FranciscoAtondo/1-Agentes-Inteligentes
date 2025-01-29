@@ -16,4 +16,24 @@ H(<10, 10, 5>|Xa) = 22/25[ -8/22 ln_2 8/22 - 10/22 ln_2 10/22 - 4/22 ln_2 4/22] 
 
 H(<10, 10, 5>|Xb) = 14/25[ -1/2 ln 1/2 - 1/2 ln_2 1/2 - 0] + 5/25[ -1/5 ln_2 1/5 - 0 - 4/5 ln_2 4/5] + 6/25[ -1/3 ln_2 1/3 - 1/2 ln_2 1/2 - 1/6 ln_2 1/6]
 
-La mayor ganancia de informacion a escoger es como la menor (?)
+La mayor ganancia de informacion a escoger es como la menor Entropia restante.
+
+# 28/01/2025
+
+Pandas es una libreria de Python para el manejo de datos.
+
+Dataframe: Conjunto de Series que comparten un mismo Indice.
+
+# 29/01/2025 - Arboles de Particiones
+
+Ganancia de Informacion: medida utilizada en Arboles de Decision para seleccionar el mejor atributo para dividir un conjunto de datos en cada nodo.
+
+La Prediccion de Error varia segun la Complejidad del Modelo de forma que muy poca o mucha aumenta esta.
+
+Mediacion/Averaging se usa para reducir la varianza: Var(x) = Var/(
+
+Hay muchas formas de hacer aprendisaje de ensamble, siendo algunos de estos:
+- Bagging: aplicando multiples datos a un nodo y clasificandolos.
+- Boosting:
+
+Un Arbol Aleatorio es un metodo de Ensamblamiento diseñado para clasificar arboles. Tienen la ventaja de ser completamente paralelisables.
