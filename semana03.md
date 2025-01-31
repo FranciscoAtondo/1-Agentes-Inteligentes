@@ -30,10 +30,21 @@ Ganancia de Informacion: medida utilizada en Arboles de Decision para selecciona
 
 La Prediccion de Error varia segun la Complejidad del Modelo de forma que muy poca o mucha aumenta esta.
 
-Mediacion/Averaging se usa para reducir la varianza: Var(x) = Var/(
+Mediacion/Averaging se usa para reducir la varianza: Var(x) = Var(x)/(n)
 
 Hay muchas formas de hacer aprendisaje de ensamble, siendo algunos de estos:
 - Bagging: aplicando multiples datos a un nodo y clasificandolos.
-- Boosting:
+- Boosting: Se entrenan modelos de manera secuencial.
+- Stacking: Se combinan múltiples modelos base entrenados con diferentes algoritmos y sus predicciones se usan como entrada para un modelo final que aprende a combinar sus resultados de manera óptima.
 
 Un Arbol Aleatorio es un metodo de Ensamblamiento diseñado para clasificar arboles. Tienen la ventaja de ser completamente paralelisables.
+
+# 30/01/2025 - Sesgo Cognitivo
+
+El Aprendizaje Automatico tiene como esencia la existencia de un patron, la imposibilidad de establecerlo de forma analitica y la obtencion y generacion de datos.
+
+Algunas consideraciones a tomar respecto al Aprendizaje Automatico:
+* Esta presente en muchas areas profesionales, pero no puede remplazar el conocimiento experto.
+* Un riesgo en cuanto a reduccion de empleos no especializados.
+* Dependencia por evidencias.
+* Riesgo latente en los usos no eticos.
